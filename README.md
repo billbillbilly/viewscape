@@ -1,7 +1,7 @@
 <!-- badges: start -->
 [![](https://www.r-pkg.org/badges/version/viewscape)](https://www.r-pkg.org/pkg/viewscape)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-[![R-CMD-check](https://github.com/land-info-lab/viewscape/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/land-info-lab/viewscape/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/digital-landscapes/viewscape/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/digital-landscapes/viewscape/actions/workflows/R-CMD-check.yaml)
 [![](https://cranlogs.r-pkg.org/badges/viewscape)](https://CRAN.R-project.org/package=viewscape)
 ![total](https://cranlogs.r-pkg.org/badges/grand-total/viewscape)
 <!-- badges: end -->
