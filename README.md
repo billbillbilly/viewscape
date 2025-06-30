@@ -1,7 +1,7 @@
 <!-- badges: start -->
 [![](https://www.r-pkg.org/badges/version/viewscape)](https://www.r-pkg.org/pkg/viewscape)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-[![R-CMD-check](https://github.com/digital-landscapes/viewscape/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/digital-landscapes/viewscape/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/billbillbilly/viewscape/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/billbillbilly/viewscape/actions/workflows/R-CMD-check.yaml)
 [![](https://cranlogs.r-pkg.org/badges/viewscape)](https://CRAN.R-project.org/package=viewscape)
 ![total](https://cranlogs.r-pkg.org/badges/grand-total/viewscape)
 <!-- badges: end -->
@@ -16,9 +16,9 @@
 
 ## Introduction
 
-The goal of viewscape package is to provide an accessible method of
+The goal of `viewscape` package is to provide an accessible method of
 carrying out landscape spatial analysis based on the viewshed within the
-R environment. The viewscape R pacakge can currently be installed via
+R environment. The viewscape R package can currently be installed via
 github.
 
 ## Intallation
@@ -37,26 +37,26 @@ library(viewscape)
 
 ## Functionality and metrics
 
-The basic viewshed analysis can be accessed through calling the
+The basic viewshed analysis can be accessed by calling the
 `compute_viewshed`. The two needed objects are a digital surface model
 (DSM) and a viewpoint. It provides flexibility for single or
 multi-viewpoint analyses and allows options for parallel processing,
 raster output, and plotting. In addition, a `fov_mask` function is 
 designed to subset a viewshed based on its viewpoint and the field of view. 
 
-Based on the viewshed, visual magnitude, a gradient ofvisibility across the range, 
+Based on the viewshed, visual magnitude, a gradient of visibility across the range, 
 can be calculated using the `visual_magnitude` function. Also, a set of configuration metrics can be calculated using `calculate_viewmetrics`, `calculate_diversity`, and
 `calculate_feature`.
 
 The metrics are including:
 
--   Number of patches: Visible fragmentation measured by total visible patches
-    with the viewscape.
+-   Number of patches: Visible fragmentation measured by the total visible patches
+    in the viewscape.
 -   Mean shape index: Visible patchiness based on average perimeter-to-area ratio
     for all viewscape patches (vegetation and building). 
 -   Edge density: A measure of visible complexity based on the length of
     patch edges per unit area.
--   Patch size: Total average size of a patches over the entire viewscape area.
+-   Patch size: Total average size of a patch over the entire viewscape area.
 -   Patch density: Visible landscape granularity based on measuring patch density.
 -   Extent: The total area of the viewshed, calculated as the number of
     visible grid cells multiplied by the grid resolution.
@@ -72,7 +72,7 @@ The metrics are including:
     (visible canopy and buildings).
 -   Shannon diversity index: Based on the number of land use/cover
     classes and the proportion of distribution.
--   Proportion of other object: Building, trees, or paved surface.
+-   Proportion of other objects: Building, trees, or paved surface.
 
 
 
@@ -118,15 +118,17 @@ test_diversity <- calculate_diversity(test_landuse, output, proportion = TRUE)
 ```
 
 From viewshed analysis, the visible area of a viewpoint is presented by
-visible points. There are several viewshed metrics such as can be
+visible points. Several viewshed metrics can be
 calculated based on the visible points. For further information on these
-metrics and the rest of the functions available in this package please
+metrics and the rest of the functions available in this package, please
 refer to the [package
 website](https://land-info-lab.github.io/viewscape/). For more
-information and examples of the functions check out the [package
+information and examples of the functions, check out the [package
 vignette](https://github.com/land-info-lab/viewscape/blob/master/viewscape.md).
 
 ## Note
+This package may take a long time to run if using spatially large or
+high-resolution digital elevation models.
 
 The package currently does not support multi-core processing on Windows system. 
 The function 'compute_viewshed' with 'parallel = TRUE' will automatically work
@@ -151,11 +153,7 @@ Tabrizian, P., Baran, P. K., Van Berkel, D., Mitasova, H., & Meentemeyer, R. (20
 
 ## Issues and bugs
 
-This package may take a long time to run if using spatially large or
-high resolution digital elevation models.
-
-If you discover a bug not associated with connection to the API that is
-not already a [reported
-issue](https://github.com/land-info-lab/viewscape/issues), please [open
-a new issue](https://github.com/land-info-lab/viewscape/issues/new)
+If you discover a bug that is not already a [reported
+issue](https://github.com/billbillbilly/viewscape/issues), please [open
+a new issue](https://github.com/billbillbilly/viewscape/issues/new)
 providing a reproducible example.
