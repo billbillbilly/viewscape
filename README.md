@@ -151,6 +151,8 @@ Landscape and Urban Planning, 111, 13-24.
 
 Tabrizian, P., Baran, P. K., Van Berkel, D., Mitasova, H., & Meentemeyer, R. (2020). Modeling restorative potential of urban environments by coupling viewscape analysis of lidar data with experiments in immersive virtual environments. Landscape and Urban planning, 195, 103704.
 
+Lu, X., Li, Z., Cui, Z., Oswald, M. R., Pollefeys, M., & Qin, R. (2020). Geometry-aware satellite-to-ground image synthesis for urban areas. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (pp. 859-867).
+
 ## Issues and bugs
 
 If you discover a bug that is not already a [reported
