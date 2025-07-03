@@ -27,6 +27,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// dsm_to_pano
+NumericMatrix dsm_to_pano(NumericMatrix dsm, double vpt_x, double vpt_y, double vpt_z, int pano_height, int pano_width, double ares, double step_size, double max_dist, double sky_value, double sky_threshold, double orientation);
+RcppExport SEXP _viewscape_dsm_to_pano(SEXP dsmSEXP, SEXP vpt_xSEXP, SEXP vpt_ySEXP, SEXP vpt_zSEXP, SEXP pano_heightSEXP, SEXP pano_widthSEXP, SEXP aresSEXP, SEXP step_sizeSEXP, SEXP max_distSEXP, SEXP sky_valueSEXP, SEXP sky_thresholdSEXP, SEXP orientationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type dsm(dsmSEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_x(vpt_xSEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_y(vpt_ySEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_z(vpt_zSEXP);
+    Rcpp::traits::input_parameter< int >::type pano_height(pano_heightSEXP);
+    Rcpp::traits::input_parameter< int >::type pano_width(pano_widthSEXP);
+    Rcpp::traits::input_parameter< double >::type ares(aresSEXP);
+    Rcpp::traits::input_parameter< double >::type step_size(step_sizeSEXP);
+    Rcpp::traits::input_parameter< double >::type max_dist(max_distSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_value(sky_valueSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_threshold(sky_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type orientation(orientationSEXP);
+    rcpp_result_gen = Rcpp::wrap(dsm_to_pano(dsm, vpt_x, vpt_y, vpt_z, pano_height, pano_width, ares, step_size, max_dist, sky_value, sky_threshold, orientation));
+    return rcpp_result_gen;
+END_RCPP
+}
 // get_depths
 NumericVector get_depths(double px, double py, NumericVector& x, NumericVector& y, int num);
 RcppExport SEXP _viewscape_get_depths(SEXP pxSEXP, SEXP pySEXP, SEXP xSEXP, SEXP ySEXP, SEXP numSEXP) {
@@ -88,6 +110,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_viewscape_VM", (DL_FUNC) &_viewscape_VM, 7},
+    {"_viewscape_dsm_to_pano", (DL_FUNC) &_viewscape_dsm_to_pano, 12},
     {"_viewscape_get_depths", (DL_FUNC) &_viewscape_get_depths, 5},
     {"_viewscape_sectorMask", (DL_FUNC) &_viewscape_sectorMask, 3},
     {"_viewscape_reference", (DL_FUNC) &_viewscape_reference, 5},

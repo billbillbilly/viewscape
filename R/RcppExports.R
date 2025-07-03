@@ -5,6 +5,10 @@ VM <- function(viewshed, dsm, slp, asp, viewpt, h, resolution) {
     .Call('_viewscape_VM', PACKAGE = 'viewscape', viewshed, dsm, slp, asp, viewpt, h, resolution)
 }
 
+dsm_to_pano <- function(dsm, vpt_x, vpt_y, vpt_z, pano_height = 256L, pano_width = 512L, ares = 0.0174533, step_size = 0.5, max_dist = 500.0, sky_value = -1.0, sky_threshold = 3.0, orientation = 0.0) {
+    .Call('_viewscape_dsm_to_pano', PACKAGE = 'viewscape', dsm, vpt_x, vpt_y, vpt_z, pano_height, pano_width, ares, step_size, max_dist, sky_value, sky_threshold, orientation)
+}
+
 get_depths <- function(px, py, x, y, num) {
     .Call('_viewscape_get_depths', PACKAGE = 'viewscape', px, py, x, y, num)
 }

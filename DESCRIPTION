@@ -1,7 +1,7 @@
 Package: viewscape
 Type: Package
 Title: Viewscape Analysis
-Version: 2.0.1
+Version: 3.0.0
 Authors@R: c(person("Xiaohao", "Yang", role = c("aut", "cre", "cph"), email = "xiaohaoy@umich.edu"),
            person("Nathan", "Fox", role = c("aut")),
            person("Derek", "Van Berkel", role = c("aut")),
@@ -13,15 +13,14 @@ Description: A collection of functions to make R a more effective viewscape anal
     Tabrizian et al. (2020) <doi:10.1016/j.landurbplan.2019.103704>. The algorithm of computing 
     viewshed is based on the work of 
     Franklin & Ray. (1994) <https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=555780f6f5d7e537eb1edb28862c86d1519af2be>.
-URL: https://github.com/land-info-lab/viewscape
-BugReports: https://github.com/land-info-lab/viewscape/issues
+URL: https://github.com/billbillbilly/viewscape
+BugReports: https://github.com/billbillbilly/viewscape/issues
 Depends: R (>= 4.2)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
-Language: en_GB
+RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
@@ -32,6 +31,7 @@ VignetteBuilder: knitr,
 biocViews:
 Imports: 
     Rcpp,
+    torch,
     rlang,
     methods,
     dplyr,
