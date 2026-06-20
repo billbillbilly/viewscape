@@ -38,7 +38,8 @@ Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
-    greenSD
+    greenSD,
+    dsmSearch
 Config/testthat/edition: 3
 VignetteBuilder: knitr,
                  rmarkdown
