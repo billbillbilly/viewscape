@@ -1,7 +1,7 @@
 <!-- badges: start -->
 [![](https://www.r-pkg.org/badges/version/viewscape)](https://www.r-pkg.org/pkg/viewscape)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-[![R-CMD-check](https://github.com/land-info-lab/viewscape/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/land-info-lab/viewscape/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/billbillbilly/viewscape/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/billbillbilly/viewscape/actions/workflows/R-CMD-check.yaml)
 [![](https://cranlogs.r-pkg.org/badges/viewscape)](https://CRAN.R-project.org/package=viewscape)
 ![total](https://cranlogs.r-pkg.org/badges/grand-total/viewscape)
 <!-- badges: end -->
@@ -102,6 +102,8 @@ pano <- viewscape::pano_view(test_dsm, test_viewpoint, h = 1.7,
 - **Skyline**: standard deviation of DSM heights for cells with visible canopy or buildings.
 
 ## Note
+This package may take a long time to run if using spatially large or
+high-resolution digital elevation models.
 
 The package does not support multi-core processing on Windows.
 `compute_viewshed(parallel = TRUE)` will automatically fall back to a
@@ -121,7 +123,7 @@ Oke, T. R. (1981). Canyon geometry and the nocturnal urban heat island: comparis
 
 Dorman, M., Vulkan, A., Erell, E., & Kloog, I. (2019). shadow: Geometric Shadow Calculations. *The R Journal*, 11(1), 287–309. https://github.com/michaeldorman/shadow
 
-## Issues and bugs
+Lu, X., Li, Z., Cui, Z., Oswald, M. R., Pollefeys, M., & Qin, R. (2020). Geometry-aware satellite-to-ground image synthesis for urban areas. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (pp. 859-867).
 
 This package may take a long time to run with spatially large or
 high-resolution elevation models.
