@@ -11,25 +11,23 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // VM
-Rcpp::NumericMatrix VM(const Rcpp::IntegerMatrix& viewshed, const Rcpp::IntegerMatrix& dsm, const Rcpp::NumericMatrix& slp, const Rcpp::NumericMatrix& asp, const Rcpp::NumericVector viewpt, const double h, const int resolution);
-RcppExport SEXP _viewscape_VM(SEXP viewshedSEXP, SEXP dsmSEXP, SEXP slpSEXP, SEXP aspSEXP, SEXP viewptSEXP, SEXP hSEXP, SEXP resolutionSEXP) {
+Rcpp::NumericMatrix VM(const Rcpp::IntegerMatrix& viewshed, const Rcpp::NumericMatrix& dsm, const Rcpp::NumericVector viewpt, const double h, const double resolution);
+RcppExport SEXP _viewscape_VM(SEXP viewshedSEXP, SEXP dsmSEXP, SEXP viewptSEXP, SEXP hSEXP, SEXP resolutionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type viewshed(viewshedSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type dsm(dsmSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type slp(slpSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type asp(aspSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type dsm(dsmSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector >::type viewpt(viewptSEXP);
     Rcpp::traits::input_parameter< const double >::type h(hSEXP);
-    Rcpp::traits::input_parameter< const int >::type resolution(resolutionSEXP);
-    rcpp_result_gen = Rcpp::wrap(VM(viewshed, dsm, slp, asp, viewpt, h, resolution));
+    Rcpp::traits::input_parameter< const double >::type resolution(resolutionSEXP);
+    rcpp_result_gen = Rcpp::wrap(VM(viewshed, dsm, viewpt, h, resolution));
     return rcpp_result_gen;
 END_RCPP
 }
 // dsm_to_pano
-NumericMatrix dsm_to_pano(NumericMatrix dsm, double vpt_x, double vpt_y, double vpt_z, int pano_height, int pano_width, double ares, double step_size, double max_dist, double sky_value, double sky_threshold, double orientation);
-RcppExport SEXP _viewscape_dsm_to_pano(SEXP dsmSEXP, SEXP vpt_xSEXP, SEXP vpt_ySEXP, SEXP vpt_zSEXP, SEXP pano_heightSEXP, SEXP pano_widthSEXP, SEXP aresSEXP, SEXP step_sizeSEXP, SEXP max_distSEXP, SEXP sky_valueSEXP, SEXP sky_thresholdSEXP, SEXP orientationSEXP) {
+NumericMatrix dsm_to_pano(NumericMatrix dsm, double vpt_x, double vpt_y, double vpt_z, int pano_height, int pano_width, double xres, double yres, double ares, double step_size, double max_dist, double sky_value, double sky_threshold, double orientation);
+RcppExport SEXP _viewscape_dsm_to_pano(SEXP dsmSEXP, SEXP vpt_xSEXP, SEXP vpt_ySEXP, SEXP vpt_zSEXP, SEXP pano_heightSEXP, SEXP pano_widthSEXP, SEXP xresSEXP, SEXP yresSEXP, SEXP aresSEXP, SEXP step_sizeSEXP, SEXP max_distSEXP, SEXP sky_valueSEXP, SEXP sky_thresholdSEXP, SEXP orientationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -39,13 +37,117 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type vpt_z(vpt_zSEXP);
     Rcpp::traits::input_parameter< int >::type pano_height(pano_heightSEXP);
     Rcpp::traits::input_parameter< int >::type pano_width(pano_widthSEXP);
+    Rcpp::traits::input_parameter< double >::type xres(xresSEXP);
+    Rcpp::traits::input_parameter< double >::type yres(yresSEXP);
     Rcpp::traits::input_parameter< double >::type ares(aresSEXP);
     Rcpp::traits::input_parameter< double >::type step_size(step_sizeSEXP);
     Rcpp::traits::input_parameter< double >::type max_dist(max_distSEXP);
     Rcpp::traits::input_parameter< double >::type sky_value(sky_valueSEXP);
     Rcpp::traits::input_parameter< double >::type sky_threshold(sky_thresholdSEXP);
     Rcpp::traits::input_parameter< double >::type orientation(orientationSEXP);
-    rcpp_result_gen = Rcpp::wrap(dsm_to_pano(dsm, vpt_x, vpt_y, vpt_z, pano_height, pano_width, ares, step_size, max_dist, sky_value, sky_threshold, orientation));
+    rcpp_result_gen = Rcpp::wrap(dsm_to_pano(dsm, vpt_x, vpt_y, vpt_z, pano_height, pano_width, xres, yres, ares, step_size, max_dist, sky_value, sky_threshold, orientation));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dsm_to_equirectangular
+NumericMatrix dsm_to_equirectangular(NumericMatrix dsm, double vpt_x, double vpt_y, double vpt_z, int pano_height, int pano_width, double xres, double yres, double step_size, double max_dist, double sky_value, double sky_threshold, double orientation);
+RcppExport SEXP _viewscape_dsm_to_equirectangular(SEXP dsmSEXP, SEXP vpt_xSEXP, SEXP vpt_ySEXP, SEXP vpt_zSEXP, SEXP pano_heightSEXP, SEXP pano_widthSEXP, SEXP xresSEXP, SEXP yresSEXP, SEXP step_sizeSEXP, SEXP max_distSEXP, SEXP sky_valueSEXP, SEXP sky_thresholdSEXP, SEXP orientationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type dsm(dsmSEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_x(vpt_xSEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_y(vpt_ySEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_z(vpt_zSEXP);
+    Rcpp::traits::input_parameter< int >::type pano_height(pano_heightSEXP);
+    Rcpp::traits::input_parameter< int >::type pano_width(pano_widthSEXP);
+    Rcpp::traits::input_parameter< double >::type xres(xresSEXP);
+    Rcpp::traits::input_parameter< double >::type yres(yresSEXP);
+    Rcpp::traits::input_parameter< double >::type step_size(step_sizeSEXP);
+    Rcpp::traits::input_parameter< double >::type max_dist(max_distSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_value(sky_valueSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_threshold(sky_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type orientation(orientationSEXP);
+    rcpp_result_gen = Rcpp::wrap(dsm_to_equirectangular(dsm, vpt_x, vpt_y, vpt_z, pano_height, pano_width, xres, yres, step_size, max_dist, sky_value, sky_threshold, orientation));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dsm_semantic_to_pano
+List dsm_semantic_to_pano(NumericMatrix dsm, NumericMatrix semantic, double vpt_x, double vpt_y, double vpt_z, int pano_height, int pano_width, double xres, double yres, double ares, double step_size, double max_dist, double sky_value, double sky_threshold, double orientation);
+RcppExport SEXP _viewscape_dsm_semantic_to_pano(SEXP dsmSEXP, SEXP semanticSEXP, SEXP vpt_xSEXP, SEXP vpt_ySEXP, SEXP vpt_zSEXP, SEXP pano_heightSEXP, SEXP pano_widthSEXP, SEXP xresSEXP, SEXP yresSEXP, SEXP aresSEXP, SEXP step_sizeSEXP, SEXP max_distSEXP, SEXP sky_valueSEXP, SEXP sky_thresholdSEXP, SEXP orientationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type dsm(dsmSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type semantic(semanticSEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_x(vpt_xSEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_y(vpt_ySEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_z(vpt_zSEXP);
+    Rcpp::traits::input_parameter< int >::type pano_height(pano_heightSEXP);
+    Rcpp::traits::input_parameter< int >::type pano_width(pano_widthSEXP);
+    Rcpp::traits::input_parameter< double >::type xres(xresSEXP);
+    Rcpp::traits::input_parameter< double >::type yres(yresSEXP);
+    Rcpp::traits::input_parameter< double >::type ares(aresSEXP);
+    Rcpp::traits::input_parameter< double >::type step_size(step_sizeSEXP);
+    Rcpp::traits::input_parameter< double >::type max_dist(max_distSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_value(sky_valueSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_threshold(sky_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type orientation(orientationSEXP);
+    rcpp_result_gen = Rcpp::wrap(dsm_semantic_to_pano(dsm, semantic, vpt_x, vpt_y, vpt_z, pano_height, pano_width, xres, yres, ares, step_size, max_dist, sky_value, sky_threshold, orientation));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dsm_to_color_equirectangular
+List dsm_to_color_equirectangular(NumericMatrix dsm, NumericMatrix sat_r, NumericMatrix sat_g, NumericMatrix sat_b, double vpt_x, double vpt_y, double vpt_z, int pano_height, int pano_width, double xres, double yres, double step_size, double max_dist, double sky_threshold, double orientation, double sky_r, double sky_g, double sky_b);
+RcppExport SEXP _viewscape_dsm_to_color_equirectangular(SEXP dsmSEXP, SEXP sat_rSEXP, SEXP sat_gSEXP, SEXP sat_bSEXP, SEXP vpt_xSEXP, SEXP vpt_ySEXP, SEXP vpt_zSEXP, SEXP pano_heightSEXP, SEXP pano_widthSEXP, SEXP xresSEXP, SEXP yresSEXP, SEXP step_sizeSEXP, SEXP max_distSEXP, SEXP sky_thresholdSEXP, SEXP orientationSEXP, SEXP sky_rSEXP, SEXP sky_gSEXP, SEXP sky_bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type dsm(dsmSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type sat_r(sat_rSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type sat_g(sat_gSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type sat_b(sat_bSEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_x(vpt_xSEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_y(vpt_ySEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_z(vpt_zSEXP);
+    Rcpp::traits::input_parameter< int >::type pano_height(pano_heightSEXP);
+    Rcpp::traits::input_parameter< int >::type pano_width(pano_widthSEXP);
+    Rcpp::traits::input_parameter< double >::type xres(xresSEXP);
+    Rcpp::traits::input_parameter< double >::type yres(yresSEXP);
+    Rcpp::traits::input_parameter< double >::type step_size(step_sizeSEXP);
+    Rcpp::traits::input_parameter< double >::type max_dist(max_distSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_threshold(sky_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type orientation(orientationSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_r(sky_rSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_g(sky_gSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_b(sky_bSEXP);
+    rcpp_result_gen = Rcpp::wrap(dsm_to_color_equirectangular(dsm, sat_r, sat_g, sat_b, vpt_x, vpt_y, vpt_z, pano_height, pano_width, xres, yres, step_size, max_dist, sky_threshold, orientation, sky_r, sky_g, sky_b));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dsm_semantic_to_equirectangular
+List dsm_semantic_to_equirectangular(NumericMatrix dsm, NumericMatrix semantic, double vpt_x, double vpt_y, double vpt_z, double ground_z, int pano_height, int pano_width, double xres, double yres, double step_size, double max_dist, double sky_value, double sky_threshold, double orientation, bool extrude_semantic);
+RcppExport SEXP _viewscape_dsm_semantic_to_equirectangular(SEXP dsmSEXP, SEXP semanticSEXP, SEXP vpt_xSEXP, SEXP vpt_ySEXP, SEXP vpt_zSEXP, SEXP ground_zSEXP, SEXP pano_heightSEXP, SEXP pano_widthSEXP, SEXP xresSEXP, SEXP yresSEXP, SEXP step_sizeSEXP, SEXP max_distSEXP, SEXP sky_valueSEXP, SEXP sky_thresholdSEXP, SEXP orientationSEXP, SEXP extrude_semanticSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type dsm(dsmSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type semantic(semanticSEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_x(vpt_xSEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_y(vpt_ySEXP);
+    Rcpp::traits::input_parameter< double >::type vpt_z(vpt_zSEXP);
+    Rcpp::traits::input_parameter< double >::type ground_z(ground_zSEXP);
+    Rcpp::traits::input_parameter< int >::type pano_height(pano_heightSEXP);
+    Rcpp::traits::input_parameter< int >::type pano_width(pano_widthSEXP);
+    Rcpp::traits::input_parameter< double >::type xres(xresSEXP);
+    Rcpp::traits::input_parameter< double >::type yres(yresSEXP);
+    Rcpp::traits::input_parameter< double >::type step_size(step_sizeSEXP);
+    Rcpp::traits::input_parameter< double >::type max_dist(max_distSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_value(sky_valueSEXP);
+    Rcpp::traits::input_parameter< double >::type sky_threshold(sky_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type orientation(orientationSEXP);
+    Rcpp::traits::input_parameter< bool >::type extrude_semantic(extrude_semanticSEXP);
+    rcpp_result_gen = Rcpp::wrap(dsm_semantic_to_equirectangular(dsm, semantic, vpt_x, vpt_y, vpt_z, ground_z, pano_height, pano_width, xres, yres, step_size, max_dist, sky_value, sky_threshold, orientation, extrude_semantic));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -109,8 +211,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_viewscape_VM", (DL_FUNC) &_viewscape_VM, 7},
-    {"_viewscape_dsm_to_pano", (DL_FUNC) &_viewscape_dsm_to_pano, 12},
+    {"_viewscape_VM", (DL_FUNC) &_viewscape_VM, 5},
+    {"_viewscape_dsm_to_pano", (DL_FUNC) &_viewscape_dsm_to_pano, 14},
+    {"_viewscape_dsm_to_equirectangular", (DL_FUNC) &_viewscape_dsm_to_equirectangular, 13},
+    {"_viewscape_dsm_semantic_to_pano", (DL_FUNC) &_viewscape_dsm_semantic_to_pano, 15},
+    {"_viewscape_dsm_to_color_equirectangular", (DL_FUNC) &_viewscape_dsm_to_color_equirectangular, 18},
+    {"_viewscape_dsm_semantic_to_equirectangular", (DL_FUNC) &_viewscape_dsm_semantic_to_equirectangular, 16},
     {"_viewscape_get_depths", (DL_FUNC) &_viewscape_get_depths, 5},
     {"_viewscape_sectorMask", (DL_FUNC) &_viewscape_sectorMask, 3},
     {"_viewscape_reference", (DL_FUNC) &_viewscape_reference, 5},

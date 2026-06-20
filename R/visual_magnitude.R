@@ -24,7 +24,6 @@
 #' vm <- viewscape::visual_magnitude(viewshed, dsm)
 #' }
 #'
-#' @importFrom terra terrain
 #'
 #' @seealso [compute_viewshed()]
 #'
@@ -44,19 +43,10 @@ visual_magnitude <- function(viewshed, dsm) {
   v <- viewshed
   # crop raster
   subdsm <- terra::crop(dsm, terra::ext(viewshed@extent, xy=TRUE))
-  # get slope
-  slope <- terra::terrain(subdsm, v="slope", neighbors=8, unit="radians")
-  aspect <- terra::terrain(subdsm, v="aspect", neighbors=8, unit="radians")
-  # direction <- terra::terrain(subdsm, v="flowdir")
   # convert raster to matrix
   dsm_matrix <- terra::as.matrix(subdsm, wide=TRUE)
-  slope_matrix <- terra::as.matrix(slope, wide=TRUE)
-  slope_matrix[is.nan(slope_matrix)] = 0
-  aspect_matrix <- terra::as.matrix(aspect, wide=TRUE)
-  aspect_matrix[is.nan(aspect_matrix)] = 0
-  # compute visual magnitude
+  # compute visual magnitude (surface normals computed from DSM internally)
   vm_matrix <- VM(viewshed@visible, dsm_matrix,
-                  slope_matrix, aspect_matrix,
                   viewshed@viewpos, viewshed@viewpoint[3],
                   viewshed@resolution[1])
   # v@visible <- vm_matrix

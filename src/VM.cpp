@@ -6,42 +6,37 @@ struct Vector3 {
   double x, y, z;
 };
 
-double calculateViewSlope(double distance, Vector3 view, double z) {
-  double dz = z - view.z;
-  double slope = atan2(distance, dz);
-  return slope;
+Vector3 normalize(Vector3 v) {
+  const double length = sqrt(pow(v.x, 2) +
+                             pow(v.y, 2) +
+                             pow(v.z, 2));
+  if (length == 0) {
+    return {0.0, 0.0, 0.0};
+  }
+  return {v.x / length, v.y / length, v.z / length};
 }
 
-double calculateViewAspect(int row, int col, Vector3 view) {
-  double pi = 2*asin(1.0);
-  double aspect = int(-atan2(view.x - col, view.y - row) + 2 * pi) % int(2 * pi);
-  return aspect;
+// Compute the outward surface normal directly from the DSM using finite differences.
+// Coordinate system: i = column = east (+x), j = row = south (+y), z = up.
+// For surface z = f(i,j):  n = normalize( -dz/di, -dz/dj, 1/resolution )
+Vector3 cellNormalFromDSM(const Rcpp::NumericMatrix &dsm,
+                          int i, int j,
+                          double resolution) {
+  const int rows = dsm.rows();
+  const int cols = dsm.cols();
+
+  // clamp indices so edge cells get a valid 1-sided difference
+  int i0 = std::max(i - 1, 0),        i2 = std::min(i + 1, cols - 1);
+  int j0 = std::max(j - 1, 0),        j2 = std::min(j + 1, rows - 1);
+
+  double dz_di = (dsm(j, i2) - dsm(j, i0)) / ((i2 - i0) * resolution);
+  double dz_dj = (dsm(j2, i) - dsm(j0, i)) / ((j2 - j0) * resolution);
+
+  return normalize({-dz_di, -dz_dj, 1.0});
 }
 
-Vector3 calculateNormal(double aspect, double slope,
-                        int col, int row, double z) {
-  Vector3 normal;
-  normal = {cos(aspect) * sin(slope),
-            sin(aspect) * sin(slope),
-            cos(slope)};
-  // normalize
-  double length = sqrt(pow(normal.x, 2) +
-                       pow(normal.y, 2) +
-                       pow(normal.z, 2));
-  normal.x /= length;
-  normal.y /= length;
-  normal.z /= length;
-  normal = {double(col) - normal.x, double(row) - normal.y, z - normal.z};
-  return normal;
-}
-
-double getAngle(Vector3 a, Vector3 b) {
-  double radian;
-  double dot = a.x*b.x + a.y*b.y + a.z*b.z;
-  double mold1 = sqrt(pow(a.x, 2) + pow(a.y, 2) + pow(a.z, 2));
-  double mold2 = sqrt(pow(b.x, 2) + pow(b.y, 2) + pow(b.z, 2));
-  radian = acos(dot/(mold1*mold2));
-  return radian;
+double dotProduct(Vector3 a, Vector3 b) {
+  return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 
 // double cosAB(int xyp, double zp,
@@ -57,7 +52,7 @@ double getAngle(Vector3 a, Vector3 b) {
 
 double PTdistance(int xp, int yp, double zp,
                   int xt, int yt, double zt,
-                  int resolution) {
+                  double resolution) {
   double res = sqrt(pow((xp-xt)*resolution,2)+
                     pow((yp-yt)*resolution,2)+
                     pow((zp-zt),2));
@@ -66,36 +61,33 @@ double PTdistance(int xp, int yp, double zp,
 
 // [[Rcpp::export]]
 Rcpp::NumericMatrix VM(const Rcpp::IntegerMatrix &viewshed,
-                       const Rcpp::IntegerMatrix &dsm,
-                       const Rcpp::NumericMatrix &slp,
-                       const Rcpp::NumericMatrix &asp,
+                       const Rcpp::NumericMatrix &dsm,
                        const Rcpp::NumericVector viewpt,
                        const double h,
-                       const int resolution) {
+                       const double resolution) {
   const int rows = dsm.rows();
   const int cols = dsm.cols();
   const double zp = dsm(viewpt[1],viewpt[0]) + h;
   Rcpp::NumericMatrix magnitude(rows, cols);
-  double viewSlope, viewAspect;
   Vector3 view = {double(viewpt[0]), double(viewpt[1]), zp};
 
   for (int i = 0; i < cols; i++) {
     for (int j = 0; j < rows; j++) {
-      if (i != viewpt[0] && j != viewpt[1]) {
+      if (i != viewpt[0] || j != viewpt[1]) {
         if (viewshed(j,i) > 0) {
           double zt = dsm(j,i);
-          double slope = slp(j,i);
-          int aspect = asp(j,i);
           double dis = PTdistance(viewpt[0], viewpt[1], zp,
                                   i, j, zt, resolution);
-          viewSlope = calculateViewSlope(dis, view, zt);
-          viewAspect = calculateViewAspect(j, i, view);
-          Vector3 viewNormal = calculateNormal(viewAspect, viewSlope,
-                                               viewpt[0], viewpt[1], zp);
-          Vector3 normal = calculateNormal(aspect, slope, i, j, zt);
-          double radian = getAngle(viewNormal, normal);
-          if (radian < 3.1415926/2) {
-            magnitude(j, i) = std::fabs(cos(radian)) * resolution*resolution/(dis*dis);
+          // view vector from cell to observer
+          Vector3 viewVector = normalize({(view.x - double(i)) * resolution,
+                                          (view.y - double(j)) * resolution,
+                                          view.z - zt});
+          // surface normal from DSM finite differences
+          Vector3 normal = cellNormalFromDSM(dsm, i, j, resolution);
+          // only front-facing surfaces contribute (dot > 0 means facing observer)
+          double angleFactor = std::max(0.0, dotProduct(normal, viewVector));
+          if (dis > 0) {
+            magnitude(j, i) = angleFactor * resolution*resolution/(dis*dis);
           }
         } else {
           magnitude(j, i) = -9;

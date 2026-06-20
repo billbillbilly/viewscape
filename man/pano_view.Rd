@@ -6,15 +6,19 @@
 \usage{
 pano_view(
   dsm = NULL,
-  semantic = NULL,
   vpt = NULL,
   h = 6,
+  semantic = NULL,
   method = "equirectangular",
   sky_threshold = 3,
   step_size = 0.5,
   max_dist = 500,
   pano_dim = c(256, 512),
+  ares = 0.0174533,
   heading = 0,
+  color_source = NULL,
+  sky_color = c(135, 206, 235),
+  satellite_zoom = 17L,
   plot = FALSE,
   legend = TRUE,
   axes = TRUE
@@ -23,58 +27,104 @@ pano_view(
 \arguments{
 \item{dsm}{A SpatRaster object (single layer) of surface elevation.}
 
-\item{semantic}{A SpatRaster object (single layer) of semantic values such as
-land cover and land use.}
+\item{vpt}{A POINT sf object or numeric coordinate pair representing the
+viewpoint (in projected coordinates).}
 
-\item{vpt}{A POINT sf object representing the viewpoint
-(in projected coordinates).}
+\item{h}{Numeric. Height of the viewpoint above the ground surface (in
+metres). Default: 6.}
 
-\item{h}{Numeric. Height of the viewpoint above the ground surface (in meters).}
+\item{semantic}{A SpatRaster object (single layer) of land-use / land-cover
+class values. When supplied with \code{method = "equirectangular"}, the
+panorama encodes the land-cover code at each ray-hit cell (depth layer
+plus semantic layer). Binary 0/1 rasters are treated as occupied vertical
+structures. When supplied with \code{method = "cylindrical"}, the return value
+has two layers: depth and semantic class.}
 
-\item{method}{character. \code{cylindrical} or \code{equirectangular}}
+\item{method}{Character. \code{"equirectangular"} (default) or \code{"cylindrical"}.}
 
-\item{sky_threshold}{Numeric. Elevation buffer (in meters) to consider a ray
-reaching sky (default: 3.0).}
+\item{sky_threshold}{Numeric. Elevation buffer (metres) below the ray
+position that is still treated as terrain (default: 3.0).}
 
-\item{step_size}{Numeric. Distance (in pixels) between sampling steps
+\item{step_size}{Numeric. Ray marching step size in DSM coordinate units
 (default: 0.5).}
 
 \item{max_dist}{Numeric. Maximum ray distance (default: 500).}
 
-\item{pano_dim}{Integer vector of size 2: height and width of the output
-panorama (default: c(256, 512)).}
+\item{pano_dim}{Integer vector of length 2: panorama height and width in
+pixels (default: \code{c(256, 512)}).}
 
-\item{heading}{numeric. Horizontal direction in degree. (default: 0). See Details.}
+\item{ares}{Numeric. Cylindrical vertical angular resolution in radians per
+pixel. Ignored when \code{method = "equirectangular"} (default: 0.0174533).}
 
-\item{plot}{logical. Whether to plot result. (default: FLASE)}
+\item{heading}{Numeric. Camera heading in degrees (default: 0 = north).
+See Details.}
 
-\item{legend}{logical. Whether to display lengend when plotting the result.
-(default: TRUE)}
+\item{color_source}{Optional SpatRaster with exactly 3 bands (R, G, B,
+values 0–255). Overrides the automatic greenSD satellite download when
+\code{method = "equirectangular"} and \code{semantic = NULL}. Useful when you
+already have a local satellite image.}
 
-\item{axes}{logical. Whether to display axis when plotting the result.
-(default: TRUE)}
+\item{sky_color}{Numeric vector of length 3 (R, G, B, 0–255). Colour
+painted on sky pixels in the colour panorama. Default: sky blue
+\code{c(135, 206, 235)}.}
+
+\item{satellite_zoom}{Integer. Tile zoom level passed to
+\code{greenSD::get_tile_green()} when auto-fetching satellite imagery
+(default: 17, ≈ 1.2 m/px at 42 °N).}
+
+\item{plot}{Logical. Whether to plot the result (default: \code{FALSE}).}
+
+\item{legend}{Logical. Whether to display a legend when plotting
+(default: \code{TRUE}).}
+
+\item{axes}{Logical. Whether to display axes when plotting (default: \code{TRUE}).}
 }
 \value{
-A SpatRaster object representing the distance panorama, with \code{NA}
-where sky is detected.
+\itemize{
+\item \code{method = "equirectangular"}, no \code{semantic}: 3-band SpatRaster
+(R, G, B, 0–255). Plot with \code{terra::plotRGB()}.
+\item \code{method = "equirectangular"}, with \code{semantic}: 2-layer SpatRaster
+(depth in metres, land-cover code).
+\item \code{method = "cylindrical"}, no \code{semantic}: single-layer distance
+SpatRaster (\code{NA} = sky).
+\item \code{method = "cylindrical"}, with \code{semantic}: 2-layer SpatRaster
+(depth, semantic class).
+}
 }
 \description{
-Generate tangential panoramic view from a DSM based on the Geo-transformation
-method proposed by Lu et al. (2020).
+Generate an equirectangular or cylindrical panoramic view from a DSM.
+
+For \code{method = "equirectangular"}:
+\itemize{
+\item \strong{No semantic}: automatically downloads ESRI WorldImagery tiles
+via \pkg{greenSD} and projects the satellite RGB colours onto the
+panoramic rays, producing a 3-band colour panorama (R, G, B, 0–255).
+\item \strong{With semantic}: projects the supplied land-use / land-cover
+raster onto the panoramic rays, returning a 2-layer SpatRaster (depth
++ land-cover codes).
+}
+For \code{method = "cylindrical"} the function always returns a single-layer
+distance panorama (with an optional second semantic layer).
 }
 \details{
 For \code{heading}:
 \itemize{
-\item heading = 0 → facing north (default)
-\item heading = 90 → facing east
-\item heading = 180 → facing south
-\item heading = 270 → facing due west
+\item \code{heading = 0}   → facing north (default)
+\item \code{heading = 90}  → facing east
+\item \code{heading = 180} → facing south
+\item \code{heading = 270} → facing west
 }
+
+The equirectangular colour panorama requires the \pkg{greenSD} package
+(install with \code{devtools::install_github("billbillbilly/greenSD")}).
+It calls \code{greenSD::get_tile_green(bbox, zoom, provider = "esri")} and
+uses the raw RGB tile (\verb{[[2]]}) as the colour source.
 }
 \examples{
 dsm <- terra::rast(system.file("test_dsm.tif", package = "viewscape"))
 vpt <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
-result <- streetscape::pano_view(dsm, vpt, 6, method = 'cylindrical')
+# cylindrical distance panorama (no internet needed)
+result <- viewscape::pano_view(dsm, vpt, h = 6, method = "cylindrical")
 
 }
 \references{

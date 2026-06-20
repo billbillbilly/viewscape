@@ -26,15 +26,17 @@ library(viewscape)
 test_dsm <- terra::rast(system.file("test_dsm.tif", 
                                        package ="viewscape"))
 
-#Load in the viewpoint
-test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", 
-                                          package = "viewscape"))
+#Load in the viewpoints
+# Load points (.shp file)
+test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp", 
+                                           package = "viewscape"))
+test_viewpoint <- test_viewpoints[2,]
 
 #Compute viewshed
 output <- viewscape::compute_viewshed(dsm = test_dsm, 
                                       viewpoints = test_viewpoint, 
-                                      offset_viewpoint = 6, 
-                                      r = 1600,
+                                      offset_viewpoint = 3, 
+                                      r = 800,
                                       method = 'plane')
 ```
 
@@ -48,8 +50,11 @@ terra::plot(test_viewpoint, add = TRUE, col = "blue", axes=FALSE, box=FALSE, leg
 
 ### 1.2 Subset viewshed using by specifying the field of view
 
+Angles are measured clockwise from north: 0 = north, 90 = east, −90 = west, ±180 = south.
+
 ```{r eval=FALSE}
-sector <- viewscape::fov_mask(output, c(40,160))
+# north-facing 120° arc (−60° to 60°)
+sector <- viewscape::fov_mask(output, c(-60, 60))
 terra::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
 terra::plot(viewscape::visualize_viewshed(sector, outputtype = 'raster'),
             axes=FALSE, box=FALSE, legend = FALSE, add = TRUE, col = "red")
@@ -58,28 +63,63 @@ terra::plot(test_viewpoint, add = TRUE, col = "blue", axes=FALSE, box=FALSE, leg
 
 ### 1.3 Compute visual magnitude
 
+Visual Magnitude (VM) quantifies how much of the observer's visual field each visible cell occupies. It combines three factors: the surface area of the cell (resolution²), the angle between the cell's surface normal and the line of sight, and the squared distance from the observer. Cells that are large, face the observer directly, and are nearby have the highest visual magnitude. The method follows Chamberlain & Meitner (2013).
+
 ```{r eval=FALSE}
-vm <- viewscape::visual_magnitude(output,test_dsm)
-terra::plot(vm, axes=FALSE, box=FALSE)
-terra::plot(test_viewpoint, add = TRUE, col = "blue", axes=FALSE, box=FALSE, legend = FALSE)
+vm <- viewscape::visual_magnitude(output, test_dsm)
+```
+
+Plot the raw VM raster. Higher values (warmer colours) indicate cells that dominate the visual field:
+
+```{r eval=FALSE}
+terra::plot(test_dsm, axes = FALSE, box = FALSE, legend = FALSE,
+            main = "Visual magnitude over DSM", col = gray.colors(256, start = 0.1, end = 0.9))
+terra::plot(sqrt(vm), add=TRUE, alpha=0.8, axes=FALSE, box=FALSE)
+terra::plot(test_viewpoint, add = TRUE, col = "red",
+            pch = 10, axes = FALSE, box = FALSE, legend = FALSE)
+```
+
+Summarise the distribution of VM values across the viewshed:
+
+```{r eval=FALSE}
+vm_vals <- terra::values(vm, na.rm = TRUE)
+summary(vm_vals)
+
+# Total visual magnitude (sums to ~1 for a full hemisphere in theory)
+sum(vm_vals)
+
+# Identify the top 10% most visually dominant cells
+threshold <- quantile(vm_vals, 0.90)
+vm_top10 <- terra::classify(vm, cbind(0, threshold, NA))  # mask low values
+terra::plot(test_dsm, axes = FALSE, box = FALSE, legend = FALSE,
+            main = "Top 10% most visually dominant cells", 
+            col = gray.colors(256, start = 0.1, end = 0.9))
+terra::plot(vm_top10, add = TRUE, col = "firebrick",
+            axes = FALSE, box = FALSE, legend = FALSE)
+terra::plot(test_viewpoint, add = TRUE, col = "blue",
+            pch = 16, axes = FALSE, box = FALSE, legend = FALSE)
+```
+
+VM can also be computed after subsetting the viewshed with `fov_mask()` to restrict the analysis to a specific field of view:
+
+```{r eval=FALSE}
+# Visual magnitude within a 120° north-east arc (0° to 120°)
+sector <- viewscape::fov_mask(output, c(0, 120))
+vm_sector <- viewscape::visual_magnitude(sector, test_dsm)
+terra::plot(vm_sector, axes = FALSE, box = FALSE,
+            main = "Visual magnitude — 120° north-east arc")
+terra::plot(test_viewpoint, add = TRUE, col = "blue",
+            pch = 16, axes = FALSE, box = FALSE, legend = FALSE)
 ```
 
 
 ### 1.4 Compute the viewshed for multiple viewpoints
 
 ```{r eval=FALSE}
-#Load in DSM
-test_dsm <- terra::rast(system.file("test_dsm.tif", 
-                                       package ="viewscape"))
-
-# Load points (.shp file)
-test_viewpoints <- sf::read_sf(system.file("test_viewpoints.shp", 
-                                           package = "viewscape"))
-
 # Compute viewsheds
 output <- viewscape::compute_viewshed(dsm = test_dsm, 
                                       viewpoints = test_viewpoints, 
-                                      offset_viewpoint = 6, 
+                                      offset_viewpoint = 10, 
                                       parallel = TRUE, 
                                       workers = 1)
 ```
@@ -93,6 +133,74 @@ for(i in 1:length(output)) {
   terra::plot(test_dsm, axes=FALSE, box=FALSE, legend = FALSE)
   terra::plot(raster_data, add=TRUE, col = "red", axes=FALSE, box=FALSE, legend = FALSE)
 }
+```
+
+### 1.5 Compute an intervisibility network
+
+`intervis_network()` tests every pair of viewpoints for mutual line of sight and returns the results either as an adjacency matrix or as a spatial network of lines.
+
+#### Adjacency matrix
+
+Each entry `[i, j]` is `1` if viewpoint `i` can see viewpoint `j`, `0` if not, and `NA` on the diagonal. Because observer heights can differ between viewpoints, visibility is not always symmetric: `[i, j]` may differ from `[j, i]`.
+
+```{r eval=FALSE}
+# Binary N x N adjacency matrix
+mat <- viewscape::intervis_network(
+  viewpoints        = test_viewpoints,
+  dsm               = test_dsm,
+  offset_viewpoint  = 10,
+  r                 = 800
+)
+mat
+```
+
+#### Network as spatial lines
+
+Setting `output = "lines"` returns an `sf` data frame of `LINESTRING` geometries — one per visible pair. The `mutual` column is `TRUE` when both viewpoints can see each other.
+
+```{r eval=FALSE}
+net <- viewscape::intervis_network(
+  viewpoints        = test_viewpoints,
+  dsm               = test_dsm,
+  offset_viewpoint  = 10,
+  r                 = 800,
+  output            = "lines"
+)
+net
+```
+
+Plot the network over the DSM to map which viewpoints are intervisible:
+
+```{r eval=FALSE}
+terra::plot(test_dsm, axes = FALSE, box = FALSE, legend = FALSE,
+            main = "Intervisibility network")
+
+# All visible links in grey
+terra::plot(net["geometry"], add = TRUE, col = "grey60", lwd = 1)
+
+# Mutually visible links in blue
+terra::plot(net[net$mutual, "geometry"], add = TRUE, col = "#2171b5", lwd = 2)
+
+# Viewpoints
+terra::plot(test_viewpoints, add = TRUE, col = "red", pch = 16, cex = 1.2)
+```
+
+#### Per-viewpoint observer heights
+
+Pass a vector of heights to `offset_viewpoint` to model different observer elevations at each point — for example, observers on rooftops of varying height:
+
+```{r eval=FALSE}
+n_vp <- nrow(sf::st_coordinates(test_viewpoints))
+# cycle through a set of representative heights, one per viewpoint
+heights <- rep(c(1.7, 6, 12), length.out = n_vp)
+
+mat_heights <- viewscape::intervis_network(
+  viewpoints       = test_viewpoints,
+  dsm              = test_dsm,
+  offset_viewpoint = heights,
+  r                = 1600
+)
+mat_heights
 ```
 
 ## 2. Calculate viewscape metrics
@@ -152,16 +260,117 @@ test_diversity
 
 ### 2.3 calculate a single feature
 
-calculate_feature is to calculate the proportion of a feature (including trees, buildings, parking, and roads) within the viewshed. This function can be applied to 
+calculate_feature is to calculate the proportion of a feature (including trees, buildings, parking, and roads) within the viewshed. This function can be applied to
 
 ```{r eval=FALSE}
-# load canopy raster
-test_canopy <- terra::rast(system.file("test_canopy.tif",
-                                          package ="viewscape"))
-# calculate the percentage of canopy coverage  
-test_canopy_proportion <- viewscape::calculate_feature(viewshed = output[[1]], 
+# calculate the percentage of canopy coverage
+test_canopy_proportion <- viewscape::calculate_feature(viewshed = output[[1]],
                                                        feature = test_canopy,
                                                        type = 2,
                                                        exclude_value=0)
 test_canopy_proportion
 ```
+
+## 3. Panoramic view
+
+`pano_view()` generates a 360° equirectangular (or cylindrical) panorama from a
+viewpoint using raycasting through the DSM. The output type depends on the
+inputs:
+
+| `method` | `semantic` | result |
+|---|---|---|
+| `"equirectangular"` (default) | `NULL` | 3-band RGB colour panorama (auto-downloads ESRI WorldImagery via **greenSD**) |
+| `"equirectangular"` | land-cover raster | 2-layer: depth (m) + land-cover codes |
+| `"cylindrical"` | `NULL` | single-layer distance panorama |
+| `"cylindrical"` | any raster | 2-layer: depth + semantic class |
+
+### 3.1 Colour panorama (equirectangular, default)
+
+When no `semantic` layer is supplied, `pano_view()` automatically fetches ESRI
+WorldImagery tiles for the DSM area via `greenSD::get_tile_green()` and
+projects the satellite RGB colours onto the panoramic rays. Sky pixels are
+filled with a configurable sky-blue colour.
+
+```{r eval=FALSE}
+# Requires the greenSD package:
+# devtools::install_github("billbillbilly/greenSD")
+
+# Default: equirectangular + ESRI WorldImagery → 3-band RGB panorama
+pano_rgb <- viewscape::pano_view(
+  dsm   = test_dsm,
+  vpt   = test_viewpoint,
+  h     = 3,              # observer height above ground (m)
+  plot  = TRUE
+)
+# pano_rgb is a 3-band SpatRaster (R, G, B, 0–255)
+# Use plotRGB() to display it at any time:
+terra::plotRGB(pano_rgb, r = 1, g = 2, b = 3)
+```
+
+Change the sky colour or the panorama dimensions:
+
+```{r eval=FALSE}
+pano_custom <- viewscape::pano_view(
+  dsm       = test_dsm,
+  vpt       = test_viewpoint,
+  h         = 6,
+  pano_dim  = c(512, 1024),        # taller panorama for more vertical detail
+  sky_color = c(200, 220, 255),    # pale-blue sky
+  heading   = 90,                  # face east
+  plot      = TRUE
+)
+```
+
+### 3.2 Land-cover / land-use panorama (equirectangular + semantic)
+
+When a `semantic` raster is supplied, `pano_view()` encodes the land-cover or
+land-use code at each ray-hit cell instead of the satellite colour. The result
+has two layers: a depth layer (distance in metres to the first surface hit) and
+a semantic layer (the code from the input raster).
+
+```{r eval=FALSE}
+test_landuse <- terra::rast(system.file("test_landuse.tif", package = "viewscape"))
+
+pano_lc <- viewscape::pano_view(
+  dsm      = test_dsm,
+  vpt      = test_viewpoint,
+  h        = 5,
+  semantic = test_landuse,   # land-use raster with class codes
+  plot     = TRUE            # plots depth (left) and land-use codes (right)
+)
+
+# Access individual layers
+depth_pano <- pano_lc[["equirectangular_depth"]]
+lc_pano    <- pano_lc[["equirectangular_semantic"]]
+terra::plot(lc_pano, main = "Land use codes in panoramic view")
+```
+
+Binary rasters (values 0/1 — e.g. building footprints, canopy masks) are
+detected automatically and treated as vertical extrusions: the semantic value
+fills the full column of voxels up to the DSM surface, matching the voxel-style
+projection of Lu et al. (2020).
+
+```{r eval=FALSE}
+test_building <- terra::rast(system.file("test_building.tif", package = "viewscape"))
+
+pano_bld <- viewscape::pano_view(
+  dsm      = test_dsm,
+  vpt      = test_viewpoint,
+  h        = 6,
+  semantic = test_building,   # binary building-footprint mask
+  plot     = TRUE
+)
+```
+
+```{r eval=FALSE}
+test_building <- terra::rast(system.file("test_building.tif", package = "viewscape"))
+
+pano_bld <- viewscape::pano_view(
+  dsm      = test_dsm,
+  vpt      = test_viewpoint,
+  h        = 6,
+  semantic = test_canopy,   # binary tree canopy mask
+  plot     = TRUE
+)
+```
+

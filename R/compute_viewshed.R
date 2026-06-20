@@ -7,12 +7,12 @@
 #' @param dsm Raster, the digital surface model/digital elevation model
 #' @param viewpoints sf point(s) or vector including x,y coordinates of a viewpoint
 #' or a matrix including several viewpoints with x,y coordinates
-#' @param offset_viewpoint numeric, setting the height of the viewpoint.
-#' (default is 1.7 meters).
-#' @param offset_height numeric, setting the height of positions that a given
-#' viewpoint will look at. (defaut is 0)
-#' @param r Numeric (optional), setting the radius for viewshed analysis.
-#' (The default is 1000m/3281ft)
+#' @param offset_viewpoint numeric, observer height above the surface **in metres**
+#' (default is 1.7 m). Automatically converted to the CRS unit of the DSM.
+#' @param offset_height numeric, target height above the surface **in metres**
+#' (default is 0 m). Automatically converted to the CRS unit of the DSM.
+#' @param r Numeric (optional), analysis radius **in metres**
+#' (default is 1000 m). Automatically converted to the CRS unit of the DSM.
 #' @param refraction_factor Number, indicating the refraction factor.
 #' The refraction factor adjusts the effect of atmospheric refraction
 #' on the apparent curvature of the Earth. In most standard applications, a refraction factor
@@ -90,14 +90,11 @@ compute_viewshed <- function(dsm,
   } else if (missing(viewpoints)) {
     stop("viewpoint(s) is missing!")
   }
-  dsm_units <- sf::st_crs(dsm)$units
-  if(is.null(r) == TRUE){
-    if (dsm_units == "ft") {
-      r <- 3281
-    } else if (dsm_units == "m") {
-      r <- 1000
-    }
-  }
+  # Convert metre-based inputs to the DSM's native CRS unit (e.g. feet)
+  if (is.null(r)) r <- 1000          # default radius in metres
+  r                <- m_to_crs_units(r,                dsm)
+  offset_viewpoint <- m_to_crs_units(offset_viewpoint, dsm)
+  offset_height    <- m_to_crs_units(offset_height,    dsm)
   ext_dsm <- terra::ext(dsm)
   # if (dsm_units == "ft" && r > 3281) {
   #   r <- 3281

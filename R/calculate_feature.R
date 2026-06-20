@@ -39,26 +39,24 @@ calculate_feature <- function(viewshed,
                               feature,
                               type,
                               exclude_value){
+  if (missing(viewshed)) stop("viewshed is missing")
+  if (missing(feature))  stop("feature is missing")
+  if (missing(type))     stop("type is missing")
+  if (type == 2 && missing(exclude_value)) stop("please specify exclude_value")
+
   if (isFALSE(terra::crs(feature, proj = TRUE) == viewshed@crs)) {
-    feature <- terra::project(feature, y=terra::crs(viewshed@crs))
+    feature <- terra::project(feature, y = viewshed@crs)
   }
-  if (missing(type)) {
-    stop("type is missing")
-  }
-  if (type == 2 & missing(exclude_value)) {
-    stop("please specify exclude_value")
-  }
+
   pt <- filter_invisible(viewshed, FALSE)
-  feature_df <- terra::extract(feature, pt)[,1]
-  # colnames(feature_df)[2] <- 'value'
-  # feature_df <- subset(feature_df, value != exclude_value)
-  if(type == 1){
-    output <- sum((viewshed@resolution[1])^2*feature_)/
-      (viewshed@resolution[1])^2*length(pt[,1])
-  }
-  else if(type == 2){
-    feature_ <- feature_df[feature_df!=exclude_value]
-    output <- length(feature_)/length(pt[,1])
+  feature_df <- terra::extract(feature, pt)
+  feature_df <- feature_df[, ncol(feature_df)]
+
+  if (type == 1) {
+    output <- sum(feature_df, na.rm = TRUE) / length(pt[, 1])
+  } else if (type == 2) {
+    feature_ <- feature_df[feature_df != exclude_value]
+    output <- length(feature_) / length(pt[, 1])
   }
   return(output)
 }
