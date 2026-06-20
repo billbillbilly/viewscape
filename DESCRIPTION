@@ -31,11 +31,15 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Remotes:
+    billbillbilly/greenSD,
+    billbillbilly/dsmSearch
 Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
-    greenSD
+    greenSD,
+    dsmSearch
 Config/testthat/edition: 3
 VignetteBuilder: knitr,
                  rmarkdown
