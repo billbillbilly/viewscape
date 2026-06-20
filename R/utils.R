@@ -4,6 +4,19 @@
 #' @importFrom methods new
 #' @importFrom stats sd
 #' @importFrom sp SpatialPoints
+#' @importFrom terra as.lines
+
+#' @noMd
+# Convert a value in metres to the native linear unit of a SpatRaster CRS.
+# Feet-based CRS identifiers include "ft", "us-ft", "foot", and "feet".
+# If the unit cannot be determined, the value is returned unchanged (assumes metres).
+m_to_crs_units <- function(value_m, dsm) {
+  units <- sf::st_crs(dsm)$units
+  if (!is.null(units) && tolower(units) %in% c("ft", "us-ft", "foot", "feet")) {
+    return(value_m * 3.28084)
+  }
+  return(value_m)
+}
 
 #' @noMd
 radius_viewshed <- function(dsm, r, refraction_factor, viewPt, offset, offset2 = 0, method) {
@@ -17,7 +30,8 @@ radius_viewshed <- function(dsm, r, refraction_factor, viewPt, offset, offset2 =
   # setup the view point
   col <- terra::colFromX(dsm, viewPt[1])
   row <- terra::rowFromY(dsm, viewPt[2])
-  z_viewpoint = terra::extract(dsm,cbind(viewPt[1],viewPt[2]))[1,1]+offset
+  .ex_vp = terra::extract(dsm,cbind(viewPt[1],viewPt[2]))
+  z_viewpoint = .ex_vp[1,ncol(.ex_vp)]+offset
   viewpoint <- matrix(0,1,3)
   viewpoint[1,1] <- col
   viewpoint[1,2] <- row
@@ -121,3 +135,4 @@ patch_p <- function(m, patchpoly){
   samples <- sf::st_coordinates(samples)[,-3]
   return(list(Nump, MSI, ED, PS, PD, samples))
 }
+

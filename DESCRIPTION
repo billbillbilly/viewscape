@@ -1,36 +1,46 @@
 Package: viewscape
 Type: Package
 Title: Viewscape Analysis
-Version: 2.0.1
+Version: 3.0.0
 Authors@R: c(person("Xiaohao", "Yang", role = c("aut", "cre", "cph"), email = "xiaohaoy@umich.edu"),
            person("Nathan", "Fox", role = c("aut")),
            person("Derek", "Van Berkel", role = c("aut")),
            person("Mark", "Lindquist", role = c("aut")))
-Description: A collection of functions to make R a more effective viewscape analysis 
-    tool for calculating viewscape metrics based on computing the viewable area for 
-    given a point/multiple viewpoints and a digital elevation model.The method of calculating 
-    viewscape metrics implemented in this package are based on the work of 
-    Tabrizian et al. (2020) <doi:10.1016/j.landurbplan.2019.103704>. The algorithm of computing 
-    viewshed is based on the work of 
-    Franklin & Ray. (1994) <https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=555780f6f5d7e537eb1edb28862c86d1519af2be>.
-URL: https://github.com/land-info-lab/viewscape
-BugReports: https://github.com/land-info-lab/viewscape/issues
+Description: Provides tools for viewscape analysis from one or multiple viewpoints
+    using a digital surface or elevation model. Core functionality includes computing
+    viewsheds, quantifying visual magnitude, calculating a suite of viewscape
+    configuration metrics (extent, depth, relief, Sky View Factor, skyline variation,
+    and patch-based landscape structure), Shannon Diversity Index and land cover feature
+    proportions within the visible area, pairwise intervisibility networks, panoramic
+    view generation, and visualizing results as rasters or polygons. Viewscape
+    configuration metrics follow the methods of Tabrizian et al. (2020)
+    <doi:10.1016/j.landurbplan.2019.103704>. The viewshed algorithm is based on
+    Franklin & Ray (1994)
+    <https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=555780f6f5d7e537eb1edb28862c86d1519af2be>
+    and Wang et al. (2000) <doi:10.14358/PERS.66.1.87>.
+    Visual magnitude is derived from Chamberlain & Meitner (2013)
+    <doi:10.1016/j.landurbplan.2013.01.003>.
+    Sky View Factor is computed following Oke (1981)
+    <doi:10.1002/joc.3370010304> as implemented in the 'shadow' package
+    (Dorman et al. 2019) <doi:10.32614/RJ-2019-024>.
+URL: https://github.com/billbillbilly/viewscape
+BugReports: https://github.com/billbillbilly/viewscape/issues
 Depends: R (>= 4.2)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
-Language: en_GB
-Suggests: 
+RoxygenNote: 7.3.2
+Suggests:
     testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    greenSD
 Config/testthat/edition: 3
 VignetteBuilder: knitr,
                  rmarkdown
 biocViews:
-Imports: 
+Imports:
     Rcpp,
     rlang,
     methods,

@@ -41,14 +41,16 @@ calculate_diversity <- function(viewshed,
                                 land,
                                 proportion = FALSE){
   if (isFALSE(terra::crs(land, proj = TRUE) == viewshed@crs)) {
-    land <- terra::project(land, y=terra::crs(viewshed@crs))
+    land <- terra::project(land, y = viewshed@crs)
   }
   pt <- filter_invisible(viewshed, FALSE)
   land <- terra::crop(land, terra::ext(viewshed@extent, xy = TRUE))
   # calculate the proportion of each class
-  land_class <- terra::extract(land, pt)[,1]
+  land_class <- terra::extract(land, pt)
+  land_class <- land_class[, ncol(land_class)]
   land_class <- as.data.frame(land_class)
   colnames(land_class)[1] <- "type"
+  land_class <- land_class[!is.na(land_class$type), , drop = FALSE]
   land_class <- dplyr::count(land_class, .data$type)
   # land_class <- dplyr::count(land_class, "type")
   total <- sum(land_class$n)
@@ -59,7 +61,7 @@ calculate_diversity <- function(viewshed,
   if (proportion) {
     sub_land_class <- land_class %>%
       dplyr::select(.data$type, proportion)
-    return(list(SDI=sdi,Proportion=t(sub_land_class)))
+    return(list(SDI=sdi, Proportion=sub_land_class))
   } else {
     return(sdi)
   }

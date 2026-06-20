@@ -40,22 +40,34 @@ visualize_viewshed <- function(viewshed,
   if (missing(viewshed)){
     stop("Viewshed object is missing")
   }
+  valid_plottypes   <- c("", "polygon", "raster")
+  valid_outputtypes <- c("", "raster", "polygon")
+  if (!plottype %in% valid_plottypes) {
+    warning("Unrecognized plottype '", plottype, "'. Use 'polygon' or 'raster'.")
+  }
+  if (!outputtype %in% valid_outputtypes) {
+    warning("Unrecognized outputtype '", outputtype, "'. Use 'raster' or 'polygon'.")
+  }
+
   # vectorize the viewshed
   mask_v <- get_patch(viewshed)
-  if (plottype == "polygon"){
+
+  # pre-compute polygon once if needed by either plottype or outputtype
+  if (plottype == "polygon" || outputtype == "polygon") {
     polygon_v <- terra::as.polygons(mask_v)
-    #polygon_v <- terra::buffer(polygon_v, width = 0.0001)
+  }
+
+  if (plottype == "polygon"){
     terra::plot(polygon_v, col = rgb(0, 1, 0, 0.3), border = NA)
-  }else if (plottype == "raster"){
+  } else if (plottype == "raster"){
     terra::plot(mask_v)
   }
-  if (outputtype == "raster" || outputtype == "polygon"){
-    if (outputtype == "raster"){
-      out <- mask_v
-    }else if (outputtype == "polygon"){
-      polygon_v <- terra::as.polygons(mask_v)
-      out <- sf::st_as_sf(polygon_v)
-    }
-    return(out)
+
+  if (outputtype == "raster"){
+    return(mask_v)
+  } else if (outputtype == "polygon"){
+    return(sf::st_as_sf(polygon_v))
   }
+
+  invisible(NULL)
 }
