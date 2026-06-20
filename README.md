@@ -29,7 +29,7 @@ and maps intervisibility networks between viewpoints.
 install.packages("viewscape")
 
 # Install the development version from GitHub
-devtools::install_github("land-info-lab/viewscape", dependencies = TRUE)
+devtools::install_github("billbillbilly/viewscape", dependencies = TRUE)
 
 # Load the package
 library(viewscape)
