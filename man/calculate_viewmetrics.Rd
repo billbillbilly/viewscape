@@ -34,6 +34,9 @@ cells multiplied by the grid resolution
 providing a measure of the variation in visible distances
 \item Horizontal: The total visible horizontal or terrestrial area within the viewshed
 \item Relief: The standard deviation of elevations of the visible ground surface
+\item Sky View Factor (SVF): The proportion of visible sky hemisphere at the viewpoint,
+computed by casting rays in 36 azimuth directions and calculating
+SVF = mean(cos^2(max obstruction angle)). Ranges from 0 (fully enclosed) to 1 (open sky).
 \item Skyline: The standard deviation of the vertical viewscape, including visible
 canopy and buildings, when specified
 \item Number of patches: Visible fragmentation measured by total visible patches
@@ -86,4 +89,11 @@ test_metrics <- viewscape::calculate_viewmetrics(output,
 Tabrizian, P., Baran, P.K., Berkel, D.B., Mitásová, H., & Meentemeyer, R.K. (2020).
 Modeling restorative potential of urban environments by coupling viewscape analysis of lidar
 data with experiments in immersive virtual environments. Landscape and Urban Planning, 195, 103704.
+
+Dorman, M., Vulkan, A., Erell, E., & Kloog, I. (2019).
+shadow: Geometric Shadow Calculations.
+The R Journal, 11(1), 287–309. \url{https://github.com/michaeldorman/shadow}
+
+Oke, T. R. (1981). Canyon geometry and the nocturnal urban heat island: comparison
+of scale model and field observations. Journal of Climatology, 1(3), 237–254.
 }

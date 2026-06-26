@@ -24,14 +24,14 @@ compute_viewshed(
 \item{viewpoints}{sf point(s) or vector including x,y coordinates of a viewpoint
 or a matrix including several viewpoints with x,y coordinates}
 
-\item{offset_viewpoint}{numeric, setting the height of the viewpoint.
-(default is 1.7 meters).}
+\item{offset_viewpoint}{numeric, observer height above the surface \strong{in metres}
+(default is 1.7 m). Automatically converted to the CRS unit of the DSM.}
 
-\item{offset_height}{numeric, setting the height of positions that a given
-viewpoint will look at. (defaut is 0)}
+\item{offset_height}{numeric, target height above the surface \strong{in metres}
+(default is 0 m). Automatically converted to the CRS unit of the DSM.}
 
-\item{r}{Numeric (optional), setting the radius for viewshed analysis.
-(The default is 1000m/3281ft)}
+\item{r}{Numeric (optional), analysis radius \strong{in metres}
+(default is 1000 m). Automatically converted to the CRS unit of the DSM.}
 
 \item{refraction_factor}{Number, indicating the refraction factor.
 The refraction factor adjusts the effect of atmospheric refraction

@@ -2,7 +2,7 @@ Package: viewscape
 Type: Package
 Title: Viewscape Analysis
 Version: 3.0.0
-Authors@R: c(person("Xiaohao", "Yang", role = c("aut", "cre", "cph"), email = "xiaohaoy@umich.edu"),
+Authors@R: c(person("Xiaohao", "Yang", role = c("aut", "cre", "cph"), email = "xiaohaoy111@gmail.com"),
            person("Nathan", "Fox", role = c("aut")),
            person("Derek", "Van Berkel", role = c("aut")),
            person("Mark", "Lindquist", role = c("aut")))
@@ -31,9 +31,6 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Remotes:
-    billbillbilly/greenSD,
-    billbillbilly/dsmSearch
 Suggests:
     testthat (>= 3.0.0),
     knitr,
