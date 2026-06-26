@@ -179,6 +179,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// view_tree
+Rcpp::IntegerMatrix view_tree(const Rcpp::NumericVector& viewpoint, const Rcpp::NumericMatrix& dsm, const double h, const int max_dis, const double refraction_factor);
+RcppExport SEXP _viewscape_view_tree(SEXP viewpointSEXP, SEXP dsmSEXP, SEXP hSEXP, SEXP max_disSEXP, SEXP refraction_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type viewpoint(viewpointSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type dsm(dsmSEXP);
+    Rcpp::traits::input_parameter< const double >::type h(hSEXP);
+    Rcpp::traits::input_parameter< const int >::type max_dis(max_disSEXP);
+    Rcpp::traits::input_parameter< const double >::type refraction_factor(refraction_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(view_tree(viewpoint, dsm, h, max_dis, refraction_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
 // reference
 Rcpp::IntegerMatrix reference(const Rcpp::NumericVector& viewpoint, const Rcpp::NumericMatrix& dsm, const double h, const int max_dis, const double refraction_factor);
 RcppExport SEXP _viewscape_reference(SEXP viewpointSEXP, SEXP dsmSEXP, SEXP hSEXP, SEXP max_disSEXP, SEXP refraction_factorSEXP) {
@@ -219,6 +234,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_viewscape_dsm_semantic_to_equirectangular", (DL_FUNC) &_viewscape_dsm_semantic_to_equirectangular, 16},
     {"_viewscape_get_depths", (DL_FUNC) &_viewscape_get_depths, 5},
     {"_viewscape_sectorMask", (DL_FUNC) &_viewscape_sectorMask, 3},
+    {"_viewscape_view_tree", (DL_FUNC) &_viewscape_view_tree, 5},
     {"_viewscape_reference", (DL_FUNC) &_viewscape_reference, 5},
     {"_viewscape_LOS", (DL_FUNC) &_viewscape_LOS, 5},
     {NULL, NULL, 0}

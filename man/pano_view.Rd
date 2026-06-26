@@ -43,7 +43,8 @@ has two layers: depth and semantic class.}
 \item{method}{Character. \code{"equirectangular"} (default) or \code{"cylindrical"}.}
 
 \item{sky_threshold}{Numeric. Elevation buffer (metres) below the ray
-position that is still treated as terrain (default: 3.0).}
+position that is still treated as terrain (default: 3.0). Must be less
+than \code{h}; if not, it is automatically clamped to \code{h - 0.01}.}
 
 \item{step_size}{Numeric. Ray marching step size in DSM coordinate units
 (default: 0.5).}
@@ -70,7 +71,7 @@ painted on sky pixels in the colour panorama. Default: sky blue
 
 \item{satellite_zoom}{Integer. Tile zoom level passed to
 \code{greenSD::get_tile_green()} when auto-fetching satellite imagery
-(default: 17, ≈ 1.2 m/px at 42 °N).}
+(default: 17, approximately 1.2 m/px at 42 degrees N).}
 
 \item{plot}{Logical. Whether to plot the result (default: \code{FALSE}).}
 

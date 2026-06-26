@@ -34,6 +34,7 @@ viewshed <- viewscape::compute_viewshed(dsm = dsm,
 vm <- viewscape::visual_magnitude(viewshed, dsm)
 }
 
+
 }
 \references{
 Chamberlain, B. C., & Meitner, M. J. (2013).

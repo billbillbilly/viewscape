@@ -57,6 +57,6 @@ testthat::test_that("invalid inputs are caught", {
   testthat::expect_error(viewscape::intervis_network(vp2, test_dsm,
                                                      offset_viewpoint = c(1, 2, 3)),
                          "offset_viewpoint")
-  testthat::expect_error(viewscape::intervis_network(missing, test_dsm),
+  testthat::expect_error(viewscape::intervis_network(dsm = test_dsm),
                          "viewpoints is missing")
 })

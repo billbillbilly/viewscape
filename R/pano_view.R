@@ -48,7 +48,7 @@
 #'   `c(135, 206, 235)`.
 #' @param satellite_zoom Integer. Tile zoom level passed to
 #'   `greenSD::get_tile_green()` when auto-fetching satellite imagery
-#'   (default: 17, ≈ 1.2 m/px at 42 °N).
+#'   (default: 17, approximately 1.2 m/px at 42 degrees N).
 #' @param plot Logical. Whether to plot the result (default: `FALSE`).
 #' @param legend Logical. Whether to display a legend when plotting
 #'   (default: `TRUE`).
@@ -145,7 +145,7 @@ pano_view <- function(dsm = NULL,
     if (!terra::hasValues(semantic))
       stop("semantic has no values")
     if (!terra::compareGeom(dsm, semantic, stopOnError = FALSE)) {
-      warning("semantic geometry differs from dsm; resampling to dsm grid",
+      warning("resampling semantic to the dsm grid",
               call. = FALSE)
       semantic <- terra::resample(semantic, dsm, method = "near")
     }

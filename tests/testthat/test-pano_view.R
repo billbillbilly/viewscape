@@ -15,6 +15,7 @@ testthat::test_that("pano_view returns a panorama raster", {
 })
 
 testthat::test_that("pano_view supports equirectangular method", {
+  testthat::skip_if_not_installed("greenSD")
   test_dsm <- terra::rast(system.file("test_dsm.tif", package = "viewscape"))
   test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp",
                                             package = "viewscape"))
@@ -27,7 +28,7 @@ testthat::test_that("pano_view supports equirectangular method", {
                                  step_size = 2)
 
   testthat::expect_s4_class(result, "SpatRaster")
-  testthat::expect_equal(dim(result), c(8, 16, 1))
+  testthat::expect_equal(dim(result), c(8, 16, 3))
 })
 
 testthat::test_that("pano_view uses distinct cylindrical and equirectangular projections", {

@@ -43,6 +43,8 @@ radius_viewshed <- function(dsm, r, refraction_factor, viewPt, offset, offset2 =
     label_matrix <- reference(viewpoint, dsm_matrix, offset2, distance, refraction_factor)
   } else if (method == "los") {
     label_matrix <- LOS(viewpoint, dsm_matrix, offset2, distance, refraction_factor)
+  } else if (method == "view_tree") {
+    label_matrix <- view_tree(viewpoint, dsm_matrix, offset2, distance, refraction_factor)
   }
 
   output <- new("Viewshed",
