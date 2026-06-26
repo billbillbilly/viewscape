@@ -33,6 +33,10 @@ sectorMask <- function(viewshed, viewpt, fov) {
     .Call('_viewscape_sectorMask', PACKAGE = 'viewscape', viewshed, viewpt, fov)
 }
 
+view_tree <- function(viewpoint, dsm, h, max_dis, refraction_factor) {
+    .Call('_viewscape_view_tree', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis, refraction_factor)
+}
+
 reference <- function(viewpoint, dsm, h, max_dis, refraction_factor) {
     .Call('_viewscape_reference', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis, refraction_factor)
 }

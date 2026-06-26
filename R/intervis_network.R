@@ -19,7 +19,7 @@
 #' @param method Character. Viewshed algorithm: \code{"plane"} (default) or
 #'   \code{"los"}. See \code{\link{compute_viewshed}} for details.
 #' @param output Character. Return type: \code{"matrix"} (default) returns an
-#'   N x N integer adjacency matrix where entry [i,j] is 1 if viewpoint i can
+#'   N x N integer adjacency matrix where row i, column j is 1 if viewpoint i can
 #'   see viewpoint j, and 0 otherwise (NA on the diagonal); \code{"lines"}
 #'   returns an sf data frame of LINESTRINGs connecting visible pairs, with
 #'   columns \code{from}, \code{to}, and \code{mutual} (TRUE when both

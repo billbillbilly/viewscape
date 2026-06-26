@@ -21,7 +21,7 @@ The fov_mask function is designed to subset a viewshed based on
 its viewpoint and the field of view
 }
 \details{
-Angles are measured clockwise from north, ranging from −180 (exclusive)
+Angles are measured clockwise from north, ranging from -180 (exclusive)
 to 180 (inclusive). The two angles may be given in either order.
 When \code{fov[1] < fov[2]} the sector spans clockwise from \code{fov[1]} to
 \code{fov[2]}. When \code{fov[1] > fov[2]} the sector wraps around ±180 (south) —
@@ -31,7 +31,7 @@ for example \code{c(135, -135)} captures a 90° south-facing arc.
 -90 \tab v \tab 90 \cr
 -135 \tab 180 \tab 135 \cr
 }
-Here, 'v' represents the viewpoint. North is 0°, east is 90°, west is −90°,
+Here, 'v' represents the viewpoint. North is 0°, east is 90°, west is -90°,
 south is ±180°.
 }
 \examples{

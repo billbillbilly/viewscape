@@ -37,7 +37,7 @@ output <- viewscape::compute_viewshed(dsm = test_dsm,
                                       viewpoints = test_viewpoint, 
                                       offset_viewpoint = 3, 
                                       r = 800,
-                                      method = 'plane')
+                                      method = 'view_tree')
 ```
 
 ```{r eval=FALSE}
